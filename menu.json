@@ -1,7 +1,11 @@
 {
   "kitchenName": "Mom Care Home Made Food",
-  "tagline": "Home-style meals, packed fresh and sent straight to your door.",
+  "tagline": "Home-style tiffin for hostellers & college crowd — pocket-friendly meals, packed fresh and delivered straight to your room.",
   "whatsappNumber": "919677851790",
+  "callNumbers": [
+    { "label": "Order / WhatsApp", "number": "9677851790" },
+    { "label": "Order / WhatsApp", "number": "9345282078" }
+  ],
   "categories": [
     {
       "id": "lunch",
