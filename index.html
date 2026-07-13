@@ -641,7 +641,7 @@
   <div class="student-pill">🎓 Loved by college hostellers</div>
 
   <div class="badge-wrap">
-    <img class="badge" src="mom-care-logo.png" alt="Mom Care Home Made Food logo">
+    <img class="badge" src="/assets/mom-care-logo.png" alt="Mom Care Home Made Food logo">
   </div>
 
   <div class="brand-name" id="kitchenName">Loading…</div>
@@ -922,6 +922,48 @@ function closeSheet(){
   document.getElementById('overlay').classList.remove('visible');
 }
 
+function buildOrderMessage(name, phone, address, notes){
+  const BT = '```'; // WhatsApp monospace block, keeps columns lined up on every phone
+  const items = cartArray();
+
+  // column widths, based on the actual order (capped so long names still wrap sanely)
+  const nameW = Math.min(24, Math.max(12, ...items.map(i => i.name.length)));
+  const amtW  = Math.max(4, ...items.map(i => String(i.price * i.qty).length)) + 1; // +1 for ₹
+
+  const padName = s => s.length > nameW ? s.slice(0, nameW - 1) + '…' : s.padEnd(nameW, ' ');
+  const padQty  = s => String(s).padStart(3, ' ');
+  const padAmt  = s => ('₹' + s).padStart(amtW, ' ');
+
+  const lines = [];
+  lines.push(`${padName('Item')}${padQty('Qty')} ${padAmt('Amt')}`);
+  lines.push('-'.repeat(nameW + 3 + 1 + amtW));
+  items.forEach(i => {
+    lines.push(`${padName(i.name)}${padQty(i.qty)} ${padAmt(i.price * i.qty)}`);
+  });
+  lines.push('-'.repeat(nameW + 3 + 1 + amtW));
+  lines.push(`${padName('Total')}${padQty('')} ${padAmt(cartTotal())}`);
+
+  const parts = [];
+  parts.push(`*${CONFIG.kitchenName}*`);
+  parts.push(`🧾 New order request`);
+  parts.push('');
+  parts.push(`${BT}\n${lines.join('\n')}\n${BT}`);
+  parts.push(`*Total: ₹${cartTotal()}*`);
+
+  const details = [];
+  if(name) details.push(`Name: ${name}`);
+  if(phone) details.push(`Phone: ${phone}`);
+  if(address) details.push(`Address: ${address}`);
+  if(notes) details.push(`Notes: ${notes}`);
+  if(details.length){
+    parts.push('');
+    parts.push(`*Customer details*`);
+    parts.push(details.join('\n'));
+  }
+
+  return parts.join('\n');
+}
+
 function sendOrder(){
   if(cartCount() === 0) return;
   const name = document.getElementById('custName').value.trim();
@@ -929,16 +971,7 @@ function sendOrder(){
   const address = document.getElementById('custAddress').value.trim();
   const notes = document.getElementById('custNotes').value.trim();
 
-  let msg = `Hi ${CONFIG.kitchenName}! I'd like to place an order:\n\n`;
-  cartArray().forEach(i => {
-    msg += `• ${i.name} × ${i.qty} — ₹${i.price*i.qty}\n`;
-  });
-  msg += `\nTotal: ₹${cartTotal()}\n`;
-  if(name) msg += `\nName: ${name}`;
-  if(phone) msg += `\nPhone: ${phone}`;
-  if(address) msg += `\nAddress: ${address}`;
-  if(notes) msg += `\nNotes: ${notes}`;
-
+  const msg = buildOrderMessage(name, phone, address, notes);
   const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 }
