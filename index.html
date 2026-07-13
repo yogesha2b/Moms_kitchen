@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1B2A28;
+    --panel: #24393A;
+    --panel-raised: #2C4142;
+    --accent: #E8A93A;
+    --accent-deep: #C1442E;
+    --cream: #F3EDE1;
+    --muted: #9FB0AC;
+    --line: rgba(243,237,225,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    min-height:100vh;
+    padding: 0 0 120px 0;
+  }
+  /* ===== EDIT YOUR DETAILS HERE (also see CONFIG in the script at bottom) ===== */
+
+  header{
+    padding: 40px 20px 28px;
+    text-align:center;
+    position:relative;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(232,169,58,0.15), transparent 60%),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size: clamp(32px, 8vw, 48px);
+    letter-spacing: -0.5px;
+    line-height:1.05;
+  }
+  .tagline{
+    color: var(--muted);
+    margin-top:10px;
+    font-size:15px;
+    max-width: 420px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  /* Category tabs styled like stacked tiffin tins */
+  .tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding: 18px 16px 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex:0 0 auto;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--muted);
+    font-size:14px;
+    font-weight:600;
+    border: 1px solid var(--line);
+    cursor:pointer;
+    white-space:nowrap;
+    transition: all 0.2s ease;
+    position:relative;
+  }
+  .tab.active{
+    background: var(--accent);
+    color: #23180A;
+    border-color: var(--accent);
+    box-shadow: 0 3px 0 var(--accent-deep);
+    transform: translateY(-1px);
+  }
+
+  main{
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 10px 16px 40px;
+  }
+
+  .category-block{
+    margin-top: 28px;
+  }
+  .category-title{
+    font-family:'Fraunces', serif;
+    font-size: 22px;
+    font-weight:600;
+    margin-bottom: 4px;
+    color: var(--accent);
+  }
+  .category-sub{
+    color: var(--muted);
+    font-size:13px;
+    margin-bottom: 14px;
+  }
+
+  .item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .item-info{flex:1;}
+  .item-name{
+    font-weight:600;
+    font-size:16px;
+  }
+  .item-desc{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:3px;
+    line-height:1.4;
+  }
+  .item-price{
+    color: var(--accent);
+    font-weight:600;
+    font-size:14px;
+    margin-top:6px;
+  }
+
+  .qty-control{
+    display:flex;
+    align-items:center;
+    gap:0;
+    background: var(--panel);
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    overflow:hidden;
+  }
+  .qty-btn{
+    width:34px;
+    height:34px;
+    background:none;
+    border:none;
+    color: var(--cream);
+    font-size:18px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .qty-btn:active{background: rgba(232,169,58,0.2);}
+  .qty-num{
+    min-width: 24px;
+    text-align:center;
+    font-weight:600;
+    font-size:15px;
+  }
+  .add-btn{
+    padding: 8px 16px;
+    background: var(--accent);
+    color: #23180A;
+    border:none;
+    border-radius: 10px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    box-shadow: 0 3px 0 var(--accent-deep);
+  }
+  .add-btn:active{
+    box-shadow: 0 1px 0 var(--accent-deep);
+    transform: translateY(2px);
+  }
+
+  /* Sticky "tiffin" order tray at bottom */
+  .tray{
+    position: fixed;
+    bottom: 0;
+    left:0; right:0;
+    background: var(--panel-raised);
+    border-top: 3px solid var(--accent);
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
+    padding: 14px 18px;
+    display:none;
+    z-index: 50;
+  }
+  .tray.visible{display:block;}
+  .tray-summary{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width: 640px;
+    margin: 0 auto 10px;
+  }
+  .tray-count{
+    font-size:13px;
+    color: var(--muted);
+  }
+  .tray-total{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    font-weight:700;
+    color: var(--accent);
+  }
+  .tray-cta{
+    max-width:640px;
+    margin: 0 auto;
+    display:flex;
+    gap:10px;
+  }
+  .btn-view{
+    flex:1;
+    padding: 13px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 10px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn-order{
+    flex:2;
+    padding: 13px;
+    background: var(--accent-deep);
+    color: var(--cream);
+    border:none;
+    border-radius: 10px;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  /* Modal - order review, styled like an open tiffin box */
+  .overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.6);
+    display:none;
+    align-items:flex-end;
+    z-index: 100;
+  }
+  .overlay.visible{display:flex;}
+  .sheet{
+    background: var(--panel);
+    width:100%;
+    max-width: 640px;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 28px;
+    max-height: 85vh;
+    overflow-y:auto;
+    border-top: 4px solid var(--accent);
+  }
+  .sheet-title{
+    font-family:'Fraunces', serif;
+    font-size: 22px;
+    font-weight:700;
+    margin-bottom: 16px;
+  }
+  .sheet-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size:14px;
+  }
+  .sheet-row .name{font-weight:600;}
+  .sheet-row .remove{
+    color: var(--muted);
+    background:none;
+    border:none;
+    font-size: 13px;
+    text-decoration: underline;
+    cursor:pointer;
+  }
+  .sheet-total{
+    display:flex;
+    justify-content:space-between;
+    padding-top: 14px;
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size: 18px;
+    color: var(--accent);
+  }
+  .field{
+    margin-top: 16px;
+  }
+  .field label{
+    display:block;
+    font-size:12px;
+    color: var(--muted);
+    margin-bottom:6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .field input, .field textarea{
+    width:100%;
+    padding: 11px 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--cream);
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .field textarea{resize: vertical; min-height: 50px;}
+  .send-btn{
+    width:100%;
+    margin-top:20px;
+    padding: 15px;
+    background: #25D366;
+    color: #06210F;
+    border:none;
+    border-radius: 10px;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .close-sheet{
+    display:block;
+    margin: 0 auto;
+    background:none;
+    border:none;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top:14px;
+    cursor:pointer;
+    text-decoration: underline;
+  }
+  .empty-note{
+    color: var(--muted);
+    font-size: 14px;
+    text-align:center;
+    padding: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Now taking orders</div>
+  <h1 id="kitchenName">Your Kitchen Name</h1>
+  <p class="tagline" id="kitchenTagline">Home-style meals, packed fresh and sent straight to your door.</p>
+</header>
+
+<div class="tabs" id="tabs"></div>
+<main id="menuContainer"></main>
+
+<div class="tray" id="tray">
+  <div class="tray-summary">
+    <span class="tray-count" id="trayCount">0 items</span>
+    <span class="tray-total" id="trayTotal">₹0</span>
+  </div>
+  <div class="tray-cta">
+    <button class="btn-view" onclick="openSheet()">View order</button>
+    <button class="btn-order" onclick="openSheet()">Review & send →</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this) closeSheet()">
+  <div class="sheet">
+    <div class="sheet-title">Your order</div>
+    <div id="sheetItems"></div>
+    <div class="sheet-total"><span>Total</span><span id="sheetTotal">₹0</span></div>
+
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" id="custName" placeholder="e.g. Priya">
+    </div>
+    <div class="field">
+      <label>Delivery address</label>
+      <textarea id="custAddress" placeholder="Flat / street / landmark"></textarea>
+    </div>
+    <div class="field">
+      <label>Notes (optional)</label>
+      <input type="text" id="custNotes" placeholder="Less spicy, no onion, etc.">
+    </div>
+
+    <button class="send-btn" onclick="sendOrder()">
+      Send order on WhatsApp
+    </button>
+    <button class="close-sheet" onclick="closeSheet()">Keep browsing menu</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIG — edit everything in here to make this yours.
+   ========================================================= */
+const CONFIG = {
+  kitchenName: "Your Kitchen Name",
+  tagline: "Home-style meals, packed fresh and sent straight to your door.",
+
+  // Your WhatsApp Business number, country code first, NO + or spaces or dashes.
+  // Example for India: "919876543210"
+  whatsappNumber: "919999999999",
+
+  categories: [
+    {
+      id: "starters",
+      title: "Starters",
+      sub: "Light bites to open the meal",
+      items: [
+        { name: "Veg Spring Rolls", desc: "Crisp-fried, served with chilli dip", price: 120 },
+        { name: "Paneer Tikka", desc: "Char-grilled cottage cheese skewers", price: 180 },
+      ]
+    },
+    {
+      id: "mains",
+      title: "Mains",
+      sub: "The heart of the tiffin",
+      items: [
+        { name: "Butter Chicken", desc: "Served with 2 tandoori rotis", price: 240 },
+        { name: "Veg Kolhapuri", desc: "Spiced mixed vegetable curry, rice on the side", price: 190 },
+        { name: "Egg Biryani", desc: "Layered basmati, boiled egg, raita included", price: 210 },
+      ]
+    },
+    {
+      id: "sides",
+      title: "Sides & Extras",
+      sub: "Add-ons for the full spread",
+      items: [
+        { name: "Steamed Rice", desc: "", price: 60 },
+        { name: "Tandoori Roti (2 pc)", desc: "", price: 40 },
+        { name: "Raita", desc: "", price: 40 },
+      ]
+    },
+    {
+      id: "desserts",
+      title: "Desserts",
+      sub: "To finish things sweetly",
+      items: [
+        { name: "Gulab Jamun (2 pc)", desc: "", price: 70 },
+        { name: "Gajar Halwa", desc: "", price: 90 },
+      ]
+    }
+  ]
+};
+/* ========================================================= */
+
+let cart = {}; // key: "categoryId|itemName" -> {name, price, qty}
+
+document.getElementById('kitchenName').textContent = CONFIG.kitchenName;
+document.getElementById('kitchenTagline').textContent = CONFIG.tagline;
+
+const tabsEl = document.getElementById('tabs');
+const menuEl = document.getElementById('menuContainer');
+
+function renderTabs(){
+  tabsEl.innerHTML = CONFIG.categories.map((c,i) =>
+    `<button class="tab ${i===0?'active':''}" data-cat="${c.id}" onclick="scrollToCat('${c.id}', this)">${c.title}</button>`
+  ).join('');
+}
+
+function scrollToCat(id, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('block-'+id).scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderMenu(){
+  menuEl.innerHTML = CONFIG.categories.map(cat => `
+    <div class="category-block" id="block-${cat.id}">
+      <div class="category-title">${cat.title}</div>
+      ${cat.sub ? `<div class="category-sub">${cat.sub}</div>` : ''}
+      ${cat.items.map(item => {
+        const key = cat.id + '|' + item.name;
+        return `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            ${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}
+            <div class="item-price">₹${item.price}</div>
+          </div>
+          <div id="ctrl-${cssKey(key)}">${controlHTML(key, item)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+function cssKey(key){ return key.replace(/[^a-zA-Z0-9]/g,'_'); }
+
+function controlHTML(key, item){
+  const qty = cart[key] ? cart[key].qty : 0;
+  if(qty === 0){
+    return `<button class="add-btn" onclick="addItem('${key.replace(/'/g,"\\'")}', '${item.name.replace(/'/g,"\\'")}', ${item.price})">Add</button>`;
+  }
+  return `
+    <div class="qty-control">
+      <button class="qty-btn" onclick="changeQty('${key.replace(/'/g,"\\'")}', '${item.name.replace(/'/g,"\\'")}', ${item.price}, -1)">−</button>
+      <span class="qty-num">${qty}</span>
+      <button class="qty-btn" onclick="changeQty('${key.replace(/'/g,"\\'")}', '${item.name.replace(/'/g,"\\'")}', ${item.price}, 1)">+</button>
+    </div>`;
+}
+
+function addItem(key, name, price){
+  cart[key] = { name, price, qty: 1 };
+  refreshItem(key);
+  refreshTray();
+}
+
+function changeQty(key, name, price, delta){
+  if(!cart[key]) cart[key] = { name, price, qty: 0 };
+  cart[key].qty += delta;
+  if(cart[key].qty <= 0) delete cart[key];
+  refreshItem(key);
+  refreshTray();
+}
+
+function refreshItem(key){
+  const el = document.getElementById('ctrl-' + cssKey(key));
+  if(!el) return;
+  const [, name] = key.split('|');
+  const price = cart[key] ? cart[key].price : (findItemPrice(key));
+  el.innerHTML = controlHTML(key, { name, price });
+}
+
+function findItemPrice(key){
+  const [catId, name] = key.split('|');
+  const cat = CONFIG.categories.find(c => c.id === catId);
+  const item = cat.items.find(i => i.name === name);
+  return item ? item.price : 0;
+}
+
+function cartArray(){ return Object.values(cart); }
+function cartTotal(){ return cartArray().reduce((sum,i)=>sum + i.price*i.qty, 0); }
+function cartCount(){ return cartArray().reduce((sum,i)=>sum + i.qty, 0); }
+
+function refreshTray(){
+  const tray = document.getElementById('tray');
+  const count = cartCount();
+  if(count === 0){
+    tray.classList.remove('visible');
+    return;
+  }
+  tray.classList.add('visible');
+  document.getElementById('trayCount').textContent = count + (count===1 ? ' item' : ' items');
+  document.getElementById('trayTotal').textContent = '₹' + cartTotal();
+}
+
+function openSheet(){
+  if(cartCount() === 0) return;
+  const itemsEl = document.getElementById('sheetItems');
+  itemsEl.innerHTML = cartArray().map(i => `
+    <div class="sheet-row">
+      <span class="name">${i.name} × ${i.qty}</span>
+      <span>₹${i.price*i.qty}</span>
+    </div>
+  `).join('');
+  document.getElementById('sheetTotal').textContent = '₹' + cartTotal();
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+function sendOrder(){
+  if(cartCount() === 0) return;
+  const name = document.getElementById('custName').value.trim();
+  const address = document.getElementById('custAddress').value.trim();
+  const notes = document.getElementById('custNotes').value.trim();
+
+  let msg = `Hi ${CONFIG.kitchenName}! I'd like to place an order:\n\n`;
+  cartArray().forEach(i => {
+    msg += `• ${i.name} × ${i.qty} — ₹${i.price*i.qty}\n`;
+  });
+  msg += `\nTotal: ₹${cartTotal()}\n`;
+  if(name) msg += `\nName: ${name}`;
+  if(address) msg += `\nAddress: ${address}`;
+  if(notes) msg += `\nNotes: ${notes}`;
+
+  const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+renderTabs();
+renderMenu();
+</script>
+
+</body>
+</html>
