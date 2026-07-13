@@ -1,0 +1,45 @@
+{
+  "kitchenName": "Your Kitchen Name",
+  "tagline": "Home-style meals, packed fresh and sent straight to your door.",
+  "whatsappNumber": "919999999999",
+  "categories": [
+    {
+      "id": "starters",
+      "title": "Starters",
+      "sub": "Light bites to open the meal",
+      "items": [
+        { "name": "Veg Spring Rolls", "desc": "Crisp-fried, served with chilli dip", "price": 120 },
+        { "name": "Paneer Tikka", "desc": "Char-grilled cottage cheese skewers", "price": 180 }
+      ]
+    },
+    {
+      "id": "mains",
+      "title": "Mains",
+      "sub": "The heart of the tiffin",
+      "items": [
+        { "name": "Butter Chicken", "desc": "Served with 2 tandoori rotis", "price": 240 },
+        { "name": "Veg Kolhapuri", "desc": "Spiced mixed vegetable curry, rice on the side", "price": 190 },
+        { "name": "Egg Biryani", "desc": "Layered basmati, boiled egg, raita included", "price": 210 }
+      ]
+    },
+    {
+      "id": "sides",
+      "title": "Sides & Extras",
+      "sub": "Add-ons for the full spread",
+      "items": [
+        { "name": "Steamed Rice", "desc": "", "price": 60 },
+        { "name": "Tandoori Roti (2 pc)", "desc": "", "price": 40 },
+        { "name": "Raita", "desc": "", "price": 40 }
+      ]
+    },
+    {
+      "id": "desserts",
+      "title": "Desserts",
+      "sub": "To finish things sweetly",
+      "items": [
+        { "name": "Gulab Jamun (2 pc)", "desc": "", "price": 70 },
+        { "name": "Gajar Halwa", "desc": "", "price": 90 }
+      ]
+    }
+  ]
+}
