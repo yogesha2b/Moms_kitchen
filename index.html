@@ -3,184 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Catalog</title>
+<title>Mom Care Home Made Food — Order Catalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1B2A28;
-    --panel: #24393A;
-    --panel-raised: #2C4142;
-    --accent: #E8A93A;
-    --accent-deep: #C1442E;
-    --cream: #F3EDE1;
-    --muted: #9FB0AC;
-    --line: rgba(243,237,225,0.12);
+    --bg: #FBF2E3;
+    --panel: #FFFFFF;
+    --panel-warm: #FFF9EE;
+    --ink: #2E1B12;
+    --ink-soft: #5A4433;
+    --muted: #97815F;
+    --accent: #C1442E;
+    --accent-deep: #8F2E1D;
+    --gold: #E8A93A;
+    --line: #EEDCC0;
+    --whatsapp: #25D366;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
     background: var(--bg);
-    color: var(--cream);
+    color: var(--ink);
     font-family: 'Work Sans', sans-serif;
     min-height:100vh;
-    padding: 0 0 120px 0;
+    padding: 0 0 130px 0;
   }
+
+  /* ---------- header ---------- */
   header{
-    padding: 40px 20px 28px;
+    padding: 28px 20px 26px;
     text-align:center;
     position:relative;
     background:
-      radial-gradient(circle at 50% 0%, rgba(232,169,58,0.15), transparent 60%),
+      radial-gradient(circle at 50% -10%, rgba(193,68,46,0.10), transparent 55%),
       var(--bg);
-    border-bottom: 1px solid var(--line);
+    border-bottom: 3px solid var(--accent);
   }
-  .eyebrow{
-    font-size:12px;
+  .corner{
+    position:absolute;
+    width: 34px; height:34px;
+    color: var(--accent);
+    opacity: 0.7;
+  }
+  .corner.tl{top:10px; left:12px;}
+  .corner.tr{top:10px; right:12px; transform: scaleX(-1);}
+
+  .badge{
+    width: 108px;
+    margin: 4px auto 10px;
+    display:block;
+  }
+
+  .brand-name{
+    font-family:'Fraunces', serif;
+    font-weight:800;
+    font-size: clamp(30px, 8vw, 42px);
+    letter-spacing: 1px;
+    color: var(--ink);
+    line-height:1;
+  }
+  .brand-sub{
+    margin-top: 8px;
+    font-size:13px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--accent);
-    font-weight:600;
-    margin-bottom:10px;
-  }
-  h1{
-    font-family:'Fraunces', serif;
     font-weight:700;
-    font-size: clamp(32px, 8vw, 48px);
-    letter-spacing: -0.5px;
-    line-height:1.05;
   }
+  .brand-sub .heart{ opacity:0.8; }
   .tagline{
-    color: var(--muted);
-    margin-top:10px;
-    font-size:15px;
-    max-width: 420px;
+    color: var(--ink-soft);
+    margin-top:12px;
+    font-size:14.5px;
+    max-width: 380px;
     margin-left:auto;
     margin-right:auto;
+    line-height:1.5;
   }
+
+  /* ---------- min order note ---------- */
+  .min-note{
+    max-width: 640px;
+    margin: 14px auto 0;
+    padding: 0 16px;
+  }
+  .min-note-inner{
+    background: var(--panel-warm);
+    border: 1px dashed var(--gold);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align:center;
+    font-weight:600;
+  }
+  .min-note-inner b{ color: var(--accent-deep); }
+
+  /* ---------- tabs ---------- */
   .tabs{
+    max-width: 640px;
+    margin: 0 auto;
     display:flex;
-    gap:8px;
-    overflow-x:auto;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
     padding: 18px 16px 4px;
-    -webkit-overflow-scrolling: touch;
   }
-  .tabs::-webkit-scrollbar{display:none;}
   .tab{
-    flex:0 0 auto;
-    padding: 10px 18px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding: 10px 16px;
     border-radius: 999px;
     background: var(--panel);
-    color: var(--muted);
-    font-size:14px;
-    font-weight:600;
-    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size:13.5px;
+    font-weight:700;
+    border: 1.5px solid var(--line);
     cursor:pointer;
     white-space:nowrap;
     transition: all 0.2s ease;
-    position:relative;
   }
+  .tab svg{ width:16px; height:16px; flex:0 0 auto; }
   .tab.active{
     background: var(--accent);
-    color: #23180A;
-    border-color: var(--accent);
+    color: #FFF6EA;
+    border-color: var(--accent-deep);
     box-shadow: 0 3px 0 var(--accent-deep);
     transform: translateY(-1px);
   }
+  .tab.active svg{ filter: brightness(0) invert(1); opacity:0.95; }
+
   main{
     max-width: 640px;
     margin: 0 auto;
-    padding: 10px 16px 40px;
+    padding: 14px 16px 40px;
   }
   .category-block{
-    margin-top: 28px;
+    margin-top: 30px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 18px 6px;
   }
   .category-title{
     font-family:'Fraunces', serif;
-    font-size: 22px;
-    font-weight:600;
-    margin-bottom: 4px;
-    color: var(--accent);
+    font-size: 21px;
+    font-weight:700;
+    margin-bottom: 2px;
+    color: var(--accent-deep);
+    display:flex;
+    align-items:center;
+    gap:8px;
   }
+  .category-title svg{ width:20px; height:20px; }
   .category-sub{
     color: var(--muted);
-    font-size:13px;
-    margin-bottom: 14px;
+    font-size:12.5px;
+    margin: 4px 0 12px;
   }
   .item{
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:14px;
-    padding: 16px 0;
+    padding: 15px 0;
     border-bottom: 1px solid var(--line);
   }
+  .item:last-child{ border-bottom:none; }
   .item-info{flex:1;}
   .item-name{
-    font-weight:600;
-    font-size:16px;
+    font-weight:700;
+    font-size:15.5px;
+    color: var(--ink);
   }
   .item-desc{
     color:var(--muted);
-    font-size:13px;
+    font-size:12.5px;
     margin-top:3px;
     line-height:1.4;
   }
-  .item-price{
-    color: var(--accent);
-    font-weight:600;
-    font-size:14px;
+  .item-price-row{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
     margin-top:6px;
   }
+  .item-price{
+    color: var(--accent-deep);
+    font-weight:700;
+    font-size:14px;
+  }
+  .item-min{
+    color: var(--muted);
+    font-size:10.5px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+  }
+
   .qty-control{
     display:flex;
     align-items:center;
     gap:0;
-    background: var(--panel);
+    background: var(--panel-warm);
     border-radius: 10px;
-    border: 1px solid var(--line);
+    border: 1.5px solid var(--gold);
     overflow:hidden;
   }
   .qty-btn{
-    width:34px;
+    width:32px;
     height:34px;
     background:none;
     border:none;
-    color: var(--cream);
-    font-size:18px;
+    color: var(--accent-deep);
+    font-size:17px;
+    font-weight:700;
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
   }
-  .qty-btn:active{background: rgba(232,169,58,0.2);}
+  .qty-btn:active{ background: rgba(193,68,46,0.14); }
   .qty-num{
-    min-width: 24px;
+    min-width: 22px;
     text-align:center;
-    font-weight:600;
-    font-size:15px;
+    font-weight:700;
+    font-size:14.5px;
+    color: var(--ink);
   }
   .add-btn{
-    padding: 8px 16px;
+    padding: 9px 16px;
     background: var(--accent);
-    color: #23180A;
+    color: #FFF6EA;
     border:none;
     border-radius: 10px;
     font-weight:700;
-    font-size:14px;
+    font-size:13.5px;
     cursor:pointer;
     box-shadow: 0 3px 0 var(--accent-deep);
+    white-space:nowrap;
   }
   .add-btn:active{
     box-shadow: 0 1px 0 var(--accent-deep);
     transform: translateY(2px);
   }
+
+  /* ---------- tray ---------- */
   .tray{
     position: fixed;
     bottom: 0;
     left:0; right:0;
-    background: var(--panel-raised);
+    background: var(--panel);
     border-top: 3px solid var(--accent);
-    box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
+    box-shadow: 0 -8px 24px rgba(46,27,18,0.15);
     padding: 14px 18px;
     display:none;
     z-index: 50;
@@ -196,12 +272,13 @@
   .tray-count{
     font-size:13px;
     color: var(--muted);
+    font-weight:600;
   }
   .tray-total{
     font-family:'Fraunces', serif;
     font-size:20px;
     font-weight:700;
-    color: var(--accent);
+    color: var(--accent-deep);
   }
   .tray-cta{
     max-width:640px;
@@ -213,17 +290,17 @@
     flex:1;
     padding: 13px;
     background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    color: var(--accent-deep);
     border-radius: 10px;
-    font-weight:600;
+    font-weight:700;
     cursor:pointer;
   }
   .btn-order{
     flex:2;
     padding: 13px;
-    background: var(--accent-deep);
-    color: var(--cream);
+    background: var(--accent);
+    color: #FFF6EA;
     border:none;
     border-radius: 10px;
     font-weight:700;
@@ -233,10 +310,13 @@
     align-items:center;
     justify-content:center;
     gap:8px;
+    box-shadow: 0 3px 0 var(--accent-deep);
   }
+
+  /* ---------- sheet ---------- */
   .overlay{
     position:fixed; inset:0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(46,27,18,0.55);
     display:none;
     align-items:flex-end;
     z-index: 100;
@@ -257,7 +337,13 @@
     font-family:'Fraunces', serif;
     font-size: 22px;
     font-weight:700;
-    margin-bottom: 16px;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .sheet-min-note{
+    font-size:12px;
+    color: var(--muted);
+    margin-bottom:14px;
   }
   .sheet-row{
     display:flex;
@@ -267,12 +353,12 @@
     border-bottom: 1px solid var(--line);
     font-size:14px;
   }
-  .sheet-row .name{font-weight:600;}
+  .sheet-row .name{font-weight:700; color:var(--ink);}
   .sheet-row .remove{
     color: var(--muted);
     background:none;
     border:none;
-    font-size: 13px;
+    font-size: 12.5px;
     text-decoration: underline;
     cursor:pointer;
   }
@@ -283,26 +369,27 @@
     font-family:'Fraunces', serif;
     font-weight:700;
     font-size: 18px;
-    color: var(--accent);
+    color: var(--accent-deep);
   }
   .field{
     margin-top: 16px;
   }
   .field label{
     display:block;
-    font-size:12px;
+    font-size:11.5px;
     color: var(--muted);
     margin-bottom:6px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight:700;
   }
   .field input, .field textarea{
     width:100%;
     padding: 11px 12px;
-    background: var(--bg);
-    border: 1px solid var(--line);
+    background: var(--panel-warm);
+    border: 1.5px solid var(--line);
     border-radius: 8px;
-    color: var(--cream);
+    color: var(--ink);
     font-family: inherit;
     font-size: 14px;
   }
@@ -311,7 +398,7 @@
     width:100%;
     margin-top:20px;
     padding: 15px;
-    background: #25D366;
+    background: var(--whatsapp);
     color: #06210F;
     border:none;
     border-radius: 10px;
@@ -350,10 +437,31 @@
 <body>
 
 <header>
-  <div class="eyebrow">Now taking orders</div>
-  <h1 id="kitchenName">Loading…</h1>
+  <svg class="corner tl" viewBox="0 0 40 40" fill="none"><path d="M2 2 V20 M2 2 H20" stroke="currentColor" stroke-width="2"/><path d="M8 2 Q2 2 2 8" stroke="currentColor" stroke-width="1.4"/></svg>
+  <svg class="corner tr" viewBox="0 0 40 40" fill="none"><path d="M2 2 V20 M2 2 H20" stroke="currentColor" stroke-width="2"/><path d="M8 2 Q2 2 2 8" stroke="currentColor" stroke-width="1.4"/></svg>
+
+  <svg class="badge" viewBox="0 0 120 120" fill="none">
+    <circle cx="60" cy="55" r="46" stroke="#E8A93A" stroke-width="2.5" fill="none"/>
+    <path d="M28 78 h64 a6 6 0 0 1 6 6 c0 16 -17 28 -38 28 s-38 -12 -38 -28 a6 6 0 0 1 6 -6 z" fill="#C1442E"/>
+    <path d="M92 84 q14 0 14 12 q0 12 -14 12" stroke="#C1442E" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M60 94 l-6 -8 h12 z" fill="#FBF2E3"/>
+    <circle cx="60" cy="97" r="6" fill="#FBF2E3"/>
+    <path d="M40 44 q20 -22 40 0 q0 26 -20 34 q-20 -8 -20 -34 z" fill="#2E1B12"/>
+    <path d="M52 60 q8 8 8 18" stroke="#2E1B12" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <path d="M18 40 q10 -14 22 -6" stroke="#8FA872" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M102 40 q-10 -14 -22 -6" stroke="#8FA872" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M14 24 q6 -6 12 -2" stroke="#C1442E" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <path d="M106 24 q-6 -6 -12 -2" stroke="#C1442E" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </svg>
+
+  <div class="brand-name" id="kitchenName">Loading…</div>
+  <div class="brand-sub"><span class="heart">♥</span> Home Made Food <span class="heart">♥</span></div>
   <p class="tagline" id="kitchenTagline"></p>
 </header>
+
+<div class="min-note">
+  <div class="min-note-inner">Please order a <b>minimum of 3</b> per item.</div>
+</div>
 
 <div class="tabs" id="tabs"></div>
 <main id="menuContainer"><p class="load-note">Loading menu…</p></main>
@@ -365,13 +473,14 @@
   </div>
   <div class="tray-cta">
     <button class="btn-view" onclick="openSheet()">View order</button>
-    <button class="btn-order" onclick="openSheet()">Review & send →</button>
+    <button class="btn-order" onclick="openSheet()">Review &amp; send →</button>
   </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="if(event.target===this) closeSheet()">
   <div class="sheet">
     <div class="sheet-title">Your order</div>
+    <div class="sheet-min-note">Minimum 3 of each item · edit quantities below</div>
     <div id="sheetItems"></div>
     <div class="sheet-total"><span>Total</span><span id="sheetTotal">₹0</span></div>
 
@@ -397,17 +506,28 @@
 
 <script>
 /* =========================================================
-   MENU DATA now lives in menu.json (same folder as this file).
+   MENU DATA lives in menu.json (same folder as this file).
    Edit menu.json to change the menu — this file never needs
-   to change for menu updates. See the git repo instructions
-   Claude gave alongside this file.
+   to change for menu updates.
    ========================================================= */
 
+const MIN_QTY = 3;
 let CONFIG = null;
 let cart = {}; // key: "categoryId|itemName" -> {name, price, qty}
 
 const tabsEl = document.getElementById('tabs');
 const menuEl = document.getElementById('menuContainer');
+
+// icon set, matched to poster's tab icons, keyed by category id with a text fallback
+const ICONS = {
+  lunch: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 2v7a2 2 0 0 0 4 0V2M7 2v20M7 9H5M11 2v20"/><path d="M17 2c-1.5 2-2 4-2 6 0 3 1 4 2 4v10"/></svg>`,
+  gravy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h14a4 4 0 0 1 0 8H8a5 5 0 0 1-5-5v-3z"/><path d="M17 12h3a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-1"/><path d="M6 6c0-1.5 1-3 2-3M10 6c0-1.5.7-2.5 1.4-3"/></svg>`,
+  night: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2a9 9 0 1 0 8 13 7.5 7.5 0 0 1-8-13z"/><circle cx="19" cy="5" r="1"/><circle cx="21" cy="9" r="0.7"/></svg>`,
+  starters: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c0-5 4-9 9-9s9 4 9 9"/><path d="M2 14h20"/><path d="M12 3v2"/></svg>`,
+  'sunday-special': `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7L12 17.8 5.8 21.2 7 14.2 2 9.3l7.1-.7L12 2z"/></svg>`,
+  milkshake: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10l-1.2 12a2 2 0 0 1-2 1.8h-3.6a2 2 0 0 1-2-1.8L7 8z"/><path d="M6 8h12l.6-3H5.4L6 8z"/><path d="M15 5V3M17 8v10"/></svg>`
+};
+const DEFAULT_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>`;
 
 async function loadMenu(){
   try{
@@ -426,9 +546,11 @@ async function loadMenu(){
   renderMenu();
 }
 
+function iconFor(id){ return ICONS[id] || DEFAULT_ICON; }
+
 function renderTabs(){
   tabsEl.innerHTML = CONFIG.categories.map((c,i) =>
-    `<button class="tab ${i===0?'active':''}" data-cat="${c.id}" onclick="scrollToCat('${c.id}', this)">${c.title}</button>`
+    `<button class="tab ${i===0?'active':''}" data-cat="${c.id}" onclick="scrollToCat('${c.id}', this)">${iconFor(c.id)}<span>${c.title}</span></button>`
   ).join('');
 }
 
@@ -441,7 +563,7 @@ function scrollToCat(id, el){
 function renderMenu(){
   menuEl.innerHTML = CONFIG.categories.map(cat => `
     <div class="category-block" id="block-${cat.id}">
-      <div class="category-title">${cat.title}</div>
+      <div class="category-title">${iconFor(cat.id)}<span>${cat.title}</span></div>
       ${cat.sub ? `<div class="category-sub">${cat.sub}</div>` : ''}
       ${cat.items.map(item => {
         const key = cat.id + '|' + item.name;
@@ -450,7 +572,10 @@ function renderMenu(){
           <div class="item-info">
             <div class="item-name">${item.name}</div>
             ${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}
-            <div class="item-price">₹${item.price}</div>
+            <div class="item-price-row">
+              <span class="item-price">₹${item.price}</span>
+              <span class="item-min">Min 3</span>
+            </div>
           </div>
           <div id="ctrl-${cssKey(key)}">${controlHTML(key, item)}</div>
         </div>`;
@@ -463,29 +588,46 @@ function cssKey(key){ return key.replace(/[^a-zA-Z0-9]/g,'_'); }
 
 function controlHTML(key, item){
   const qty = cart[key] ? cart[key].qty : 0;
+  const safeKey = key.replace(/'/g,"\\'");
+  const safeName = item.name.replace(/'/g,"\\'");
   if(qty === 0){
-    return `<button class="add-btn" onclick="addItem('${key.replace(/'/g,"\\'")}', '${item.name.replace(/'/g,"\\'")}', ${item.price})">Add</button>`;
+    return `<button class="add-btn" onclick="addItem('${safeKey}', '${safeName}', ${item.price})">Add · min 3</button>`;
   }
   return `
     <div class="qty-control">
-      <button class="qty-btn" onclick="changeQty('${key.replace(/'/g,"\\'")}', '${item.name.replace(/'/g,"\\'")}', ${item.price}, -1)">−</button>
+      <button class="qty-btn" onclick="minusClick('${safeKey}', '${safeName}', ${item.price})" aria-label="${qty===MIN_QTY?'Remove':'Decrease'}">${qty===MIN_QTY ? '✕' : '−'}</button>
       <span class="qty-num">${qty}</span>
-      <button class="qty-btn" onclick="changeQty('${key.replace(/'/g,"\\'")}', '${item.name.replace(/'/g,"\\'")}', ${item.price}, 1)">+</button>
+      <button class="qty-btn" onclick="changeQty('${safeKey}', '${safeName}', ${item.price}, 1)" aria-label="Increase">+</button>
     </div>`;
 }
 
 function addItem(key, name, price){
-  cart[key] = { name, price, qty: 1 };
+  cart[key] = { name, price, qty: MIN_QTY };
   refreshItem(key);
   refreshTray();
 }
 
 function changeQty(key, name, price, delta){
-  if(!cart[key]) cart[key] = { name, price, qty: 0 };
+  if(!cart[key]) cart[key] = { name, price, qty: MIN_QTY };
   cart[key].qty += delta;
-  if(cart[key].qty <= 0) delete cart[key];
+  if(cart[key].qty < MIN_QTY) cart[key].qty = MIN_QTY;
   refreshItem(key);
   refreshTray();
+}
+
+function minusClick(key, name, price){
+  if(cart[key] && cart[key].qty <= MIN_QTY){
+    removeItem(key);
+  }else{
+    changeQty(key, name, price, -1);
+  }
+}
+
+function removeItem(key){
+  delete cart[key];
+  refreshItem(key);
+  refreshTray();
+  refreshSheetIfOpen();
 }
 
 function refreshItem(key){
@@ -503,7 +645,7 @@ function findItemPrice(key){
   return item ? item.price : 0;
 }
 
-function cartArray(){ return Object.values(cart); }
+function cartArray(){ return Object.entries(cart).map(([key, v]) => ({ key, ...v })); }
 function cartTotal(){ return cartArray().reduce((sum,i)=>sum + i.price*i.qty, 0); }
 function cartCount(){ return cartArray().reduce((sum,i)=>sum + i.qty, 0); }
 
@@ -519,6 +661,13 @@ function refreshTray(){
   document.getElementById('trayTotal').textContent = '₹' + cartTotal();
 }
 
+function refreshSheetIfOpen(){
+  if(document.getElementById('overlay').classList.contains('visible')){
+    if(cartCount() === 0){ closeSheet(); return; }
+    openSheet();
+  }
+}
+
 function openSheet(){
   if(cartCount() === 0) return;
   const itemsEl = document.getElementById('sheetItems');
@@ -526,6 +675,7 @@ function openSheet(){
     <div class="sheet-row">
       <span class="name">${i.name} × ${i.qty}</span>
       <span>₹${i.price*i.qty}</span>
+      <button class="remove" onclick="removeItem('${i.key.replace(/'/g,"\\'")}')">Remove</button>
     </div>
   `).join('');
   document.getElementById('sheetTotal').textContent = '₹' + cartTotal();
