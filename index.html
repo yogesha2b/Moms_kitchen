@@ -21,12 +21,62 @@
     --whatsapp: #25D366;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
+  html{ scroll-behavior:smooth; }
   body{
     background: var(--bg);
     color: var(--ink);
     font-family: 'Work Sans', sans-serif;
     min-height:100vh;
     padding: 0 0 130px 0;
+    overflow-x:hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* ---------- ambient floating background ---------- */
+  .ambient{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+  }
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    filter: blur(40px);
+    opacity:0.35;
+    animation: drift 16s ease-in-out infinite;
+  }
+  .blob.b1{ width:220px; height:220px; background: var(--gold); top:-60px; left:-60px; animation-delay:0s; }
+  .blob.b2{ width:260px; height:260px; background: var(--accent); top:20%; right:-100px; animation-delay:-5s; }
+  .blob.b3{ width:180px; height:180px; background: #8FA872; bottom:120px; left:-70px; animation-delay:-10s; }
+  @keyframes drift{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(20px,-24px) scale(1.08); }
+  }
+
+  @keyframes fadeSlideDown{
+    from{ opacity:0; transform: translateY(-18px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideUp{
+    from{ opacity:0; transform: translateY(18px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  @keyframes popIn{
+    from{ opacity:0; transform: scale(0.85); }
+    to{ opacity:1; transform: scale(1); }
+  }
+  @keyframes floatY{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-8px) rotate(1.2deg); }
+  }
+  @keyframes shine{
+    0%{ background-position: -150% 0; }
+    100%{ background-position: 250% 0; }
   }
 
   /* ---------- header ---------- */
@@ -38,6 +88,7 @@
       radial-gradient(circle at 50% -10%, rgba(193,68,46,0.10), transparent 55%),
       var(--bg);
     border-bottom: 3px solid var(--accent);
+    z-index:1;
   }
   .corner{
     position:absolute;
@@ -48,10 +99,38 @@
   .corner.tl{top:10px; left:12px;}
   .corner.tr{top:10px; right:12px; transform: scaleX(-1);}
 
+  .student-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background: var(--accent);
+    color:#FFF6EA;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    padding:6px 14px;
+    border-radius:999px;
+    margin-bottom:14px;
+    animation: fadeSlideDown 0.6s ease both, floatY 5s ease-in-out 0.6s infinite;
+  }
+
+  .badge-wrap{
+    perspective: 700px;
+    width: 132px;
+    margin: 4px auto 8px;
+  }
   .badge{
-    width: 108px;
-    margin: 4px auto 10px;
+    width: 132px;
     display:block;
+    margin: 0 auto;
+    filter: drop-shadow(0 10px 18px rgba(143,46,29,0.25));
+    animation: fadeSlideDown 0.7s ease both, floatY 6s ease-in-out 0.7s infinite;
+    transition: transform 0.4s ease;
+    transform-style: preserve-3d;
+  }
+  .badge-wrap:hover .badge{
+    transform: rotateY(14deg) rotateX(6deg) scale(1.04);
   }
 
   .brand-name{
@@ -61,6 +140,7 @@
     letter-spacing: 1px;
     color: var(--ink);
     line-height:1;
+    animation: fadeSlideDown 0.7s ease 0.05s both;
   }
   .brand-sub{
     margin-top: 8px;
@@ -69,16 +149,18 @@
     text-transform: uppercase;
     color: var(--accent);
     font-weight:700;
+    animation: fadeSlideDown 0.7s ease 0.12s both;
   }
-  .brand-sub .heart{ opacity:0.8; }
+  .brand-sub .heart{ opacity:0.8; display:inline-block; animation: floatY 2.4s ease-in-out infinite; }
   .tagline{
     color: var(--ink-soft);
     margin-top:12px;
     font-size:14.5px;
-    max-width: 380px;
+    max-width: 400px;
     margin-left:auto;
     margin-right:auto;
     line-height:1.5;
+    animation: fadeSlideDown 0.7s ease 0.18s both;
   }
 
   /* ---------- min order note ---------- */
@@ -86,6 +168,8 @@
     max-width: 640px;
     margin: 14px auto 0;
     padding: 0 16px;
+    position:relative;
+    z-index:1;
   }
   .min-note-inner{
     background: var(--panel-warm);
@@ -96,6 +180,7 @@
     color: var(--ink-soft);
     text-align:center;
     font-weight:600;
+    animation: fadeSlideUp 0.6s ease 0.2s both;
   }
   .min-note-inner b{ color: var(--accent-deep); }
 
@@ -108,6 +193,8 @@
     justify-content:center;
     gap:10px;
     padding: 18px 16px 4px;
+    position:relative;
+    z-index:1;
   }
   .tab{
     display:flex;
@@ -122,9 +209,12 @@
     border: 1.5px solid var(--line);
     cursor:pointer;
     white-space:nowrap;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    opacity:0;
+    animation: popIn 0.45s ease both;
   }
   .tab svg{ width:16px; height:16px; flex:0 0 auto; }
+  .tab:hover{ transform: translateY(-2px); box-shadow: 0 4px 10px rgba(46,27,18,0.12); }
   .tab.active{
     background: var(--accent);
     color: #FFF6EA;
@@ -132,12 +222,15 @@
     box-shadow: 0 3px 0 var(--accent-deep);
     transform: translateY(-1px);
   }
+  .tab.active:hover{ transform: translateY(-2px); }
   .tab.active svg{ filter: brightness(0) invert(1); opacity:0.95; }
 
   main{
     max-width: 640px;
     margin: 0 auto;
     padding: 14px 16px 40px;
+    position:relative;
+    z-index:1;
   }
   .category-block{
     margin-top: 30px;
@@ -145,6 +238,17 @@
     border: 1px solid var(--line);
     border-radius: 18px;
     padding: 18px 18px 6px;
+    transform-style: preserve-3d;
+    transform: perspective(900px) rotateX(0deg) rotateY(0deg);
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    opacity:0;
+    will-change: transform;
+  }
+  .category-block.revealed{
+    animation: fadeSlideUp 0.6s ease both;
+  }
+  .category-block:hover{
+    box-shadow: 0 18px 32px rgba(46,27,18,0.12);
   }
   .category-title{
     font-family:'Fraunces', serif;
@@ -169,8 +273,14 @@
     gap:14px;
     padding: 15px 0;
     border-bottom: 1px solid var(--line);
+    transition: background 0.3s ease;
   }
   .item:last-child{ border-bottom:none; }
+  .item.just-added{ animation: itemFlash 0.6s ease; }
+  @keyframes itemFlash{
+    0%{ background: rgba(232,169,58,0.35); }
+    100%{ background: transparent; }
+  }
   .item-info{flex:1;}
   .item-name{
     font-weight:700;
@@ -210,6 +320,7 @@
     border-radius: 10px;
     border: 1.5px solid var(--gold);
     overflow:hidden;
+    animation: popIn 0.25s ease;
   }
   .qty-btn{
     width:32px;
@@ -223,15 +334,19 @@
     display:flex;
     align-items:center;
     justify-content:center;
+    transition: background 0.15s ease;
   }
-  .qty-btn:active{ background: rgba(193,68,46,0.14); }
+  .qty-btn:hover{ background: rgba(232,169,58,0.18); }
+  .qty-btn:active{ background: rgba(193,68,46,0.14); transform: scale(0.92); }
   .qty-num{
     min-width: 22px;
     text-align:center;
     font-weight:700;
     font-size:14.5px;
     color: var(--ink);
+    display:inline-block;
   }
+  .qty-num.bump{ animation: popIn 0.25s ease; }
   .add-btn{
     padding: 9px 16px;
     background: var(--accent);
@@ -243,7 +358,9 @@
     cursor:pointer;
     box-shadow: 0 3px 0 var(--accent-deep);
     white-space:nowrap;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
+  .add-btn:hover{ transform: translateY(-1px); }
   .add-btn:active{
     box-shadow: 0 1px 0 var(--accent-deep);
     transform: translateY(2px);
@@ -261,7 +378,7 @@
     display:none;
     z-index: 50;
   }
-  .tray.visible{display:block;}
+  .tray.visible{ display:block; animation: fadeSlideUp 0.35s ease; }
   .tray-summary{
     display:flex;
     justify-content:space-between;
@@ -280,6 +397,7 @@
     font-weight:700;
     color: var(--accent-deep);
   }
+  .tray-total.bump{ animation: popIn 0.3s ease; }
   .tray-cta{
     max-width:640px;
     margin: 0 auto;
@@ -295,7 +413,9 @@
     border-radius: 10px;
     font-weight:700;
     cursor:pointer;
+    transition: transform 0.15s ease;
   }
+  .btn-view:hover{ transform: translateY(-1px); }
   .btn-order{
     flex:2;
     padding: 13px;
@@ -311,7 +431,9 @@
     justify-content:center;
     gap:8px;
     box-shadow: 0 3px 0 var(--accent-deep);
+    transition: transform 0.15s ease;
   }
+  .btn-order:hover{ transform: translateY(-1px); }
 
   /* ---------- sheet ---------- */
   .overlay{
@@ -321,7 +443,8 @@
     align-items:flex-end;
     z-index: 100;
   }
-  .overlay.visible{display:flex;}
+  .overlay.visible{ display:flex; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
   .sheet{
     background: var(--panel);
     width:100%;
@@ -332,6 +455,12 @@
     max-height: 85vh;
     overflow-y:auto;
     border-top: 4px solid var(--accent);
+    transform-origin: bottom center;
+    animation: sheetIn 0.35s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes sheetIn{
+    from{ opacity:0; transform: translateY(40px) rotateX(6deg); }
+    to{ opacity:1; transform: translateY(0) rotateX(0deg); }
   }
   .sheet-title{
     font-family:'Fraunces', serif;
@@ -352,6 +481,7 @@
     padding: 10px 0;
     border-bottom: 1px solid var(--line);
     font-size:14px;
+    gap:8px;
   }
   .sheet-row .name{font-weight:700; color:var(--ink);}
   .sheet-row .remove{
@@ -361,6 +491,7 @@
     font-size: 12.5px;
     text-decoration: underline;
     cursor:pointer;
+    flex:0 0 auto;
   }
   .sheet-total{
     display:flex;
@@ -392,6 +523,12 @@
     color: var(--ink);
     font-family: inherit;
     font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .field input:focus, .field textarea:focus{
+    outline:none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(193,68,46,0.12);
   }
   .field textarea{resize: vertical; min-height: 50px;}
   .send-btn{
@@ -409,7 +546,10 @@
     align-items:center;
     justify-content:center;
     gap:8px;
+    transition: transform 0.15s ease;
   }
+  .send-btn:hover{ transform: translateY(-1px); }
+  .send-btn:active{ transform: translateY(1px); }
   .close-sheet{
     display:block;
     margin: 0 auto;
@@ -432,27 +572,77 @@
     text-align:center;
     padding: 40px 0;
   }
+
+  /* ---------- contact footer ---------- */
+  footer{
+    max-width:640px;
+    margin: 30px auto 0;
+    padding: 0 16px;
+    position:relative;
+    z-index:1;
+    text-align:center;
+  }
+  .contact-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px 18px 24px;
+  }
+  .contact-eyebrow{
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color: var(--accent-deep);
+    font-weight:700;
+    margin-bottom:12px;
+  }
+  .contact-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .contact-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background: var(--accent);
+    color:#FFF6EA;
+    text-decoration:none;
+    font-weight:700;
+    font-size:14.5px;
+    padding: 13px;
+    border-radius: 10px;
+    box-shadow: 0 3px 0 var(--accent-deep);
+    transition: transform 0.15s ease;
+  }
+  .contact-btn:hover{ transform: translateY(-1px); }
+  .contact-btn:active{ transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-deep); }
+  .contact-btn svg{ width:18px; height:18px; flex:0 0 auto; }
+  .contact-note{
+    margin-top:14px;
+    font-size:12px;
+    color: var(--muted);
+  }
 </style>
 </head>
 <body>
+
+<div class="ambient">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
 
 <header>
   <svg class="corner tl" viewBox="0 0 40 40" fill="none"><path d="M2 2 V20 M2 2 H20" stroke="currentColor" stroke-width="2"/><path d="M8 2 Q2 2 2 8" stroke="currentColor" stroke-width="1.4"/></svg>
   <svg class="corner tr" viewBox="0 0 40 40" fill="none"><path d="M2 2 V20 M2 2 H20" stroke="currentColor" stroke-width="2"/><path d="M8 2 Q2 2 2 8" stroke="currentColor" stroke-width="1.4"/></svg>
 
-  <svg class="badge" viewBox="0 0 120 120" fill="none">
-    <circle cx="60" cy="55" r="46" stroke="#E8A93A" stroke-width="2.5" fill="none"/>
-    <path d="M28 78 h64 a6 6 0 0 1 6 6 c0 16 -17 28 -38 28 s-38 -12 -38 -28 a6 6 0 0 1 6 -6 z" fill="#C1442E"/>
-    <path d="M92 84 q14 0 14 12 q0 12 -14 12" stroke="#C1442E" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <path d="M60 94 l-6 -8 h12 z" fill="#FBF2E3"/>
-    <circle cx="60" cy="97" r="6" fill="#FBF2E3"/>
-    <path d="M40 44 q20 -22 40 0 q0 26 -20 34 q-20 -8 -20 -34 z" fill="#2E1B12"/>
-    <path d="M52 60 q8 8 8 18" stroke="#2E1B12" stroke-width="10" stroke-linecap="round" fill="none"/>
-    <path d="M18 40 q10 -14 22 -6" stroke="#8FA872" stroke-width="4" stroke-linecap="round" fill="none"/>
-    <path d="M102 40 q-10 -14 -22 -6" stroke="#8FA872" stroke-width="4" stroke-linecap="round" fill="none"/>
-    <path d="M14 24 q6 -6 12 -2" stroke="#C1442E" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-    <path d="M106 24 q-6 -6 -12 -2" stroke="#C1442E" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-  </svg>
+  <div class="student-pill">🎓 Loved by college hostellers</div>
+
+  <div class="badge-wrap">
+    <img class="badge" src="mom-care-logo.png" alt="Mom Care Home Made Food logo">
+  </div>
 
   <div class="brand-name" id="kitchenName">Loading…</div>
   <div class="brand-sub"><span class="heart">♥</span> Home Made Food <span class="heart">♥</span></div>
@@ -465,6 +655,8 @@
 
 <div class="tabs" id="tabs"></div>
 <main id="menuContainer"><p class="load-note">Loading menu…</p></main>
+
+<footer id="footer"></footer>
 
 <div class="tray" id="tray">
   <div class="tray-summary">
@@ -489,8 +681,12 @@
       <input type="text" id="custName" placeholder="e.g. Sree varsha">
     </div>
     <div class="field">
+      <label>Your phone number</label>
+      <input type="tel" id="custPhone" placeholder="e.g. 98765 43210" inputmode="tel">
+    </div>
+    <div class="field">
       <label>Delivery address</label>
-      <textarea id="custAddress" placeholder="Flat / street / landmark"></textarea>
+      <textarea id="custAddress" placeholder="Hostel / PG / room no. / landmark"></textarea>
     </div>
     <div class="field">
       <label>Notes (optional)</label>
@@ -517,6 +713,7 @@ let cart = {}; // key: "categoryId|itemName" -> {name, price, qty}
 
 const tabsEl = document.getElementById('tabs');
 const menuEl = document.getElementById('menuContainer');
+const footerEl = document.getElementById('footer');
 
 // icon set, matched to poster's tab icons, keyed by category id with a text fallback
 const ICONS = {
@@ -528,6 +725,8 @@ const ICONS = {
   milkshake: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10l-1.2 12a2 2 0 0 1-2 1.8h-3.6a2 2 0 0 1-2-1.8L7 8z"/><path d="M6 8h12l.6-3H5.4L6 8z"/><path d="M15 5V3M17 8v10"/></svg>`
 };
 const DEFAULT_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>`;
+const WA_ICON = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3.1.83.83-3-.2-.32A8.2 8.2 0 1 1 12 20.2zm4.5-6.15c-.25-.13-1.45-.72-1.68-.8-.22-.08-.38-.13-.55.13-.16.25-.63.8-.77.97-.14.16-.28.18-.53.06-.25-.13-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.28.37-.42.13-.14.16-.24.25-.4.08-.16.04-.3-.02-.42-.06-.13-.55-1.32-.75-1.8-.2-.48-.4-.4-.55-.4h-.47c-.16 0-.42.06-.64.3-.22.25-.85.83-.85 2.03s.87 2.36.99 2.52c.13.16 1.7 2.6 4.13 3.64.58.25 1.03.4 1.38.5.58.19 1.11.16 1.53.1.47-.07 1.45-.6 1.65-1.17.2-.58.2-1.07.14-1.17-.06-.1-.22-.16-.47-.28z"/></svg>`;
+const CALL_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.9.35 1.8.66 2.6a2 2 0 0 1-.45 2.1L8.1 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.45c.85.31 1.72.53 2.6.66A2 2 0 0 1 22 16.9z"/></svg>`;
 
 async function loadMenu(){
   try{
@@ -544,13 +743,16 @@ async function loadMenu(){
   document.getElementById('kitchenTagline').textContent = CONFIG.tagline;
   renderTabs();
   renderMenu();
+  renderFooter();
+  setupCardTilt();
+  setupScrollReveal();
 }
 
 function iconFor(id){ return ICONS[id] || DEFAULT_ICON; }
 
 function renderTabs(){
   tabsEl.innerHTML = CONFIG.categories.map((c,i) =>
-    `<button class="tab ${i===0?'active':''}" data-cat="${c.id}" onclick="scrollToCat('${c.id}', this)">${iconFor(c.id)}<span>${c.title}</span></button>`
+    `<button class="tab ${i===0?'active':''}" style="animation-delay:${0.05*i}s" data-cat="${c.id}" onclick="scrollToCat('${c.id}', this)">${iconFor(c.id)}<span>${c.title}</span></button>`
   ).join('');
 }
 
@@ -568,7 +770,7 @@ function renderMenu(){
       ${cat.items.map(item => {
         const key = cat.id + '|' + item.name;
         return `
-        <div class="item">
+        <div class="item" id="item-${cssKey(key)}">
           <div class="item-info">
             <div class="item-name">${item.name}</div>
             ${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}
@@ -582,6 +784,27 @@ function renderMenu(){
       }).join('')}
     </div>
   `).join('');
+}
+
+function renderFooter(){
+  const nums = (CONFIG.callNumbers && CONFIG.callNumbers.length)
+    ? CONFIG.callNumbers
+    : [{ label: 'Order / WhatsApp', number: CONFIG.whatsappNumber.replace(/^91/, '') }];
+
+  footerEl.innerHTML = `
+    <div class="contact-card">
+      <div class="contact-eyebrow">Call / WhatsApp to order</div>
+      <div class="contact-buttons">
+        ${nums.map(n => `
+          <a class="contact-btn" href="https://wa.me/91${n.number}" target="_blank" rel="noopener">
+            ${WA_ICON}
+            <span>${n.label} — ${n.number}</span>
+          </a>
+        `).join('')}
+      </div>
+      <div class="contact-note">Tap a number to WhatsApp us directly, or use "Review &amp; send" above.</div>
+    </div>
+  `;
 }
 
 function cssKey(key){ return key.replace(/[^a-zA-Z0-9]/g,'_'); }
@@ -605,6 +828,7 @@ function addItem(key, name, price){
   cart[key] = { name, price, qty: MIN_QTY };
   refreshItem(key);
   refreshTray();
+  flashItem(key);
 }
 
 function changeQty(key, name, price, delta){
@@ -638,6 +862,14 @@ function refreshItem(key){
   el.innerHTML = controlHTML(key, { name, price });
 }
 
+function flashItem(key){
+  const row = document.getElementById('item-' + cssKey(key));
+  if(!row) return;
+  row.classList.remove('just-added');
+  void row.offsetWidth; // restart animation
+  row.classList.add('just-added');
+}
+
 function findItemPrice(key){
   const [catId, name] = key.split('|');
   const cat = CONFIG.categories.find(c => c.id === catId);
@@ -658,7 +890,11 @@ function refreshTray(){
   }
   tray.classList.add('visible');
   document.getElementById('trayCount').textContent = count + (count===1 ? ' item' : ' items');
-  document.getElementById('trayTotal').textContent = '₹' + cartTotal();
+  const totalEl = document.getElementById('trayTotal');
+  totalEl.textContent = '₹' + cartTotal();
+  totalEl.classList.remove('bump');
+  void totalEl.offsetWidth;
+  totalEl.classList.add('bump');
 }
 
 function refreshSheetIfOpen(){
@@ -689,6 +925,7 @@ function closeSheet(){
 function sendOrder(){
   if(cartCount() === 0) return;
   const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
   const notes = document.getElementById('custNotes').value.trim();
 
@@ -698,11 +935,47 @@ function sendOrder(){
   });
   msg += `\nTotal: ₹${cartTotal()}\n`;
   if(name) msg += `\nName: ${name}`;
+  if(phone) msg += `\nPhone: ${phone}`;
   if(address) msg += `\nAddress: ${address}`;
   if(notes) msg += `\nNotes: ${notes}`;
 
   const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
+}
+
+/* ---------- 3D tilt on category cards (desktop pointer only) ---------- */
+function setupCardTilt(){
+  if(window.matchMedia('(pointer: coarse)').matches) return; // skip on touch devices
+  document.querySelectorAll('.category-block').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `perspective(900px) rotateX(${(-y*4).toFixed(2)}deg) rotateY(${(x*4).toFixed(2)}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+    });
+  });
+}
+
+/* ---------- scroll reveal for category cards ---------- */
+function setupScrollReveal(){
+  const blocks = document.querySelectorAll('.category-block');
+  if(!('IntersectionObserver' in window)){
+    blocks.forEach(b => { b.style.opacity = 1; });
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.style.opacity = 1;
+        entry.target.classList.add('revealed');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  blocks.forEach(b => io.observe(b));
 }
 
 loadMenu();
