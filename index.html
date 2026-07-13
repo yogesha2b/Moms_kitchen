@@ -25,8 +25,6 @@
     min-height:100vh;
     padding: 0 0 120px 0;
   }
-  /* ===== EDIT YOUR DETAILS HERE (also see CONFIG in the script at bottom) ===== */
-
   header{
     padding: 40px 20px 28px;
     text-align:center;
@@ -59,8 +57,6 @@
     margin-left:auto;
     margin-right:auto;
   }
-
-  /* Category tabs styled like stacked tiffin tins */
   .tabs{
     display:flex;
     gap:8px;
@@ -90,13 +86,11 @@
     box-shadow: 0 3px 0 var(--accent-deep);
     transform: translateY(-1px);
   }
-
   main{
     max-width: 640px;
     margin: 0 auto;
     padding: 10px 16px 40px;
   }
-
   .category-block{
     margin-top: 28px;
   }
@@ -112,7 +106,6 @@
     font-size:13px;
     margin-bottom: 14px;
   }
-
   .item{
     display:flex;
     justify-content:space-between;
@@ -138,7 +131,6 @@
     font-size:14px;
     margin-top:6px;
   }
-
   .qty-control{
     display:flex;
     align-items:center;
@@ -182,8 +174,6 @@
     box-shadow: 0 1px 0 var(--accent-deep);
     transform: translateY(2px);
   }
-
-  /* Sticky "tiffin" order tray at bottom */
   .tray{
     position: fixed;
     bottom: 0;
@@ -244,8 +234,6 @@
     justify-content:center;
     gap:8px;
   }
-
-  /* Modal - order review, styled like an open tiffin box */
   .overlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,0.6);
@@ -352,18 +340,23 @@
     text-align:center;
     padding: 20px 0;
   }
+  .load-note{
+    color: var(--muted);
+    text-align:center;
+    padding: 40px 0;
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="eyebrow">Now taking orders</div>
-  <h1 id="kitchenName">Your Kitchen Name</h1>
-  <p class="tagline" id="kitchenTagline">Home-style meals, packed fresh and sent straight to your door.</p>
+  <h1 id="kitchenName">Loading…</h1>
+  <p class="tagline" id="kitchenTagline"></p>
 </header>
 
 <div class="tabs" id="tabs"></div>
-<main id="menuContainer"></main>
+<main id="menuContainer"><p class="load-note">Loading menu…</p></main>
 
 <div class="tray" id="tray">
   <div class="tray-summary">
@@ -404,66 +397,34 @@
 
 <script>
 /* =========================================================
-   CONFIG — edit everything in here to make this yours.
+   MENU DATA now lives in menu.json (same folder as this file).
+   Edit menu.json to change the menu — this file never needs
+   to change for menu updates. See the git repo instructions
+   Claude gave alongside this file.
    ========================================================= */
-const CONFIG = {
-  kitchenName: "Your Kitchen Name",
-  tagline: "Home-style meals, packed fresh and sent straight to your door.",
 
-  // Your WhatsApp Business number, country code first, NO + or spaces or dashes.
-  // Example for India: "919876543210"
-  whatsappNumber: "919999999999",
-
-  categories: [
-    {
-      id: "starters",
-      title: "Starters",
-      sub: "Light bites to open the meal",
-      items: [
-        { name: "Veg Spring Rolls", desc: "Crisp-fried, served with chilli dip", price: 120 },
-        { name: "Paneer Tikka", desc: "Char-grilled cottage cheese skewers", price: 180 },
-      ]
-    },
-    {
-      id: "mains",
-      title: "Mains",
-      sub: "The heart of the tiffin",
-      items: [
-        { name: "Butter Chicken", desc: "Served with 2 tandoori rotis", price: 240 },
-        { name: "Veg Kolhapuri", desc: "Spiced mixed vegetable curry, rice on the side", price: 190 },
-        { name: "Egg Biryani", desc: "Layered basmati, boiled egg, raita included", price: 210 },
-      ]
-    },
-    {
-      id: "sides",
-      title: "Sides & Extras",
-      sub: "Add-ons for the full spread",
-      items: [
-        { name: "Steamed Rice", desc: "", price: 60 },
-        { name: "Tandoori Roti (2 pc)", desc: "", price: 40 },
-        { name: "Raita", desc: "", price: 40 },
-      ]
-    },
-    {
-      id: "desserts",
-      title: "Desserts",
-      sub: "To finish things sweetly",
-      items: [
-        { name: "Gulab Jamun (2 pc)", desc: "", price: 70 },
-        { name: "Gajar Halwa", desc: "", price: 90 },
-      ]
-    }
-  ]
-};
-/* ========================================================= */
-
+let CONFIG = null;
 let cart = {}; // key: "categoryId|itemName" -> {name, price, qty}
-
-document.getElementById('kitchenName').textContent = CONFIG.kitchenName;
-document.getElementById('kitchenTagline').textContent = CONFIG.tagline;
 
 const tabsEl = document.getElementById('tabs');
 const menuEl = document.getElementById('menuContainer');
+
+async function loadMenu(){
+  try{
+    // cache-bust so edits to menu.json show up immediately after a deploy
+    const res = await fetch('menu.json?v=' + Date.now());
+    if(!res.ok) throw new Error('menu.json not found (HTTP ' + res.status + ')');
+    CONFIG = await res.json();
+  }catch(err){
+    menuEl.innerHTML = '<p class="load-note">Could not load menu.json — make sure it is in the same folder as this page and you are viewing it over http(s), not as a local file:// path.</p>';
+    console.error(err);
+    return;
+  }
+  document.getElementById('kitchenName').textContent = CONFIG.kitchenName;
+  document.getElementById('kitchenTagline').textContent = CONFIG.tagline;
+  renderTabs();
+  renderMenu();
+}
 
 function renderTabs(){
   tabsEl.innerHTML = CONFIG.categories.map((c,i) =>
@@ -594,8 +555,7 @@ function sendOrder(){
   window.open(url, '_blank');
 }
 
-renderTabs();
-renderMenu();
+loadMenu();
 </script>
 
 </body>
