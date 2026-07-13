@@ -1,44 +1,84 @@
 {
-  "kitchenName": "Your Kitchen Name",
+  "kitchenName": "Mom Care Home Made Food",
   "tagline": "Home-style meals, packed fresh and sent straight to your door.",
-  "whatsappNumber": "919999999999",
+  "whatsappNumber": "919677851790",
   "categories": [
+    {
+      "id": "lunch",
+      "title": "Lunch",
+      "sub": "",
+      "items": [
+        { "name": "Idly (4 pcs)", "desc": "", "price": 30 },
+        { "name": "Dosa (2 pcs)", "desc": "", "price": 30 },
+        { "name": "Egg Dosa (2 pcs)", "desc": "", "price": 50 },
+        { "name": "Poori (2 pcs)", "desc": "", "price": 30 },
+        { "name": "Chapathi (2 pcs)", "desc": "", "price": 30 },
+        { "name": "Coconut Rice", "desc": "", "price": 40 },
+        { "name": "Curd Rice", "desc": "", "price": 40 },
+        { "name": "Lemon Rice", "desc": "", "price": 40 },
+        { "name": "Tamarind Rice", "desc": "", "price": 50 },
+        { "name": "Veg Fried Rice", "desc": "", "price": 50 },
+        { "name": "Veg Briyani", "desc": "", "price": 50 },
+        { "name": "Tomato Rice", "desc": "", "price": 50 },
+        { "name": "Egg Fried Rice", "desc": "", "price": 50 },
+        { "name": "Egg Noodles", "desc": "", "price": 60 },
+        { "name": "Chicken Rice", "desc": "", "price": 90 },
+        { "name": "Chicken Noodles", "desc": "", "price": 90 }
+      ]
+    },
+    {
+      "id": "gravy",
+      "title": "Gravy",
+      "sub": "",
+      "items": [
+        { "name": "Chicken Gravy", "desc": "", "price": 100 },
+        { "name": "Paneer Gravy", "desc": "", "price": 100 },
+        { "name": "Egg Gravy", "desc": "", "price": 50 },
+        { "name": "Mushroom Gravy", "desc": "", "price": 70 },
+        { "name": "Pepper Chicken Gravy", "desc": "", "price": 130 }
+      ]
+    },
+    {
+      "id": "night",
+      "title": "Night",
+      "sub": "",
+      "items": [
+        { "name": "Idly (4 pcs)", "desc": "", "price": 30 },
+        { "name": "Dosa (2 pcs)", "desc": "", "price": 30 },
+        { "name": "Egg Dosa (1 pc)", "desc": "", "price": 25 },
+        { "name": "Poori (2 pcs)", "desc": "", "price": 30 },
+        { "name": "Chapathi (2 pcs)", "desc": "", "price": 30 }
+      ]
+    },
     {
       "id": "starters",
       "title": "Starters",
-      "sub": "Light bites to open the meal",
+      "sub": "",
       "items": [
-        { "name": "Veg Spring Rolls", "desc": "Crisp-fried, served with chilli dip", "price": 120 },
-        { "name": "Paneer Tikka", "desc": "Char-grilled cottage cheese skewers", "price": 180 }
+        { "name": "Chicken 65", "desc": "", "price": 50 },
+        { "name": "Mushroom 65", "desc": "", "price": 50 },
+        { "name": "Cauliflower 65", "desc": "", "price": 50 },
+        { "name": "Meal Maker 65", "desc": "", "price": 40 },
+        { "name": "Omelette", "desc": "", "price": 15 },
+        { "name": "Full Boil (Egg)", "desc": "", "price": 15 }
       ]
     },
     {
-      "id": "mains",
-      "title": "Mains",
-      "sub": "The heart of the tiffin",
+      "id": "sunday-special",
+      "title": "Sunday Special",
+      "sub": "",
       "items": [
-        { "name": "Butter Chicken", "desc": "Served with 2 tandoori rotis", "price": 240 },
-        { "name": "Veg Kolhapuri", "desc": "Spiced mixed vegetable curry, rice on the side", "price": 190 },
-        { "name": "Egg Biryani", "desc": "Layered basmati, boiled egg, raita included", "price": 210 }
+        { "name": "Chicken Biriyani", "desc": "", "price": 90 },
+        { "name": "Chilly Biriyani", "desc": "", "price": 120 },
+        { "name": "Chicken Biriyani + Egg", "desc": "", "price": 100 }
       ]
     },
     {
-      "id": "sides",
-      "title": "Sides & Extras",
-      "sub": "Add-ons for the full spread",
+      "id": "milkshake",
+      "title": "Milkshake",
+      "sub": "",
       "items": [
-        { "name": "Steamed Rice", "desc": "", "price": 60 },
-        { "name": "Tandoori Roti (2 pc)", "desc": "", "price": 40 },
-        { "name": "Raita", "desc": "", "price": 40 }
-      ]
-    },
-    {
-      "id": "desserts",
-      "title": "Desserts",
-      "sub": "To finish things sweetly",
-      "items": [
-        { "name": "Gulab Jamun (2 pc)", "desc": "", "price": 70 },
-        { "name": "Gajar Halwa", "desc": "", "price": 90 }
+        { "name": "Oreo Shake", "desc": "", "price": 60 }
       ]
     }
   ]
