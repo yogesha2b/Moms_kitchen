@@ -152,6 +152,53 @@
     animation: fadeSlideDown 0.7s ease 0.12s both;
   }
   .brand-sub .heart{ opacity:0.8; display:inline-block; animation: floatY 2.4s ease-in-out infinite; }
+  /* ---------- 3D spinning plate (hero) ---------- */
+  .plate3d-wrap{
+    width: 84px;
+    height: 84px;
+    margin: 10px auto 4px;
+    perspective: 600px;
+  }
+  .plate3d{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform-style: preserve-3d;
+    animation: spin3d 7s linear infinite;
+  }
+  @keyframes spin3d{
+    from{ transform: rotateX(62deg) rotateZ(0deg); }
+    to{ transform: rotateX(62deg) rotateZ(360deg); }
+  }
+  .plate3d .ring{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 0 6px rgba(232,169,58,0.12);
+  }
+  .plate3d .ring.inner{
+    inset: 16px;
+    border-color: var(--accent);
+    border-style: dashed;
+  }
+  .plate3d .dot{
+    position:absolute;
+    width:8px; height:8px;
+    border-radius:50%;
+    background: var(--accent-deep);
+    top:50%; left:50%;
+    transform: translate(-50%,-50%) translateZ(4px);
+  }
+  .plate3d-wrap::after{
+    content:'';
+    display:block;
+    width:56px;
+    height:10px;
+    margin:2px auto 0;
+    background: radial-gradient(ellipse at center, rgba(46,27,18,0.18), transparent 70%);
+    border-radius:50%;
+  }
   .tagline{
     color: var(--ink-soft);
     margin-top:12px;
@@ -281,11 +328,12 @@
     0%{ background: rgba(232,169,58,0.35); }
     100%{ background: transparent; }
   }
-  .item-info{flex:1;}
+  .item-info{flex:1 1 auto; min-width:0;}
   .item-name{
     font-weight:700;
     font-size:15.5px;
     color: var(--ink);
+    overflow-wrap: break-word;
   }
   .item-desc{
     color:var(--muted);
@@ -316,6 +364,7 @@
     display:flex;
     align-items:center;
     gap:0;
+    flex:0 0 auto;
     background: var(--panel-warm);
     border-radius: 10px;
     border: 1.5px solid var(--gold);
@@ -358,6 +407,7 @@
     cursor:pointer;
     box-shadow: 0 3px 0 var(--accent-deep);
     white-space:nowrap;
+    flex:0 0 auto;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
   .add-btn:hover{ transform: translateY(-1px); }
@@ -483,7 +533,14 @@
     font-size:14px;
     gap:8px;
   }
-  .sheet-row .name{font-weight:700; color:var(--ink);}
+  .sheet-row .name{
+    font-weight:700;
+    color:var(--ink);
+    flex:1 1 auto;
+    min-width:0;
+    overflow-wrap:break-word;
+  }
+  .sheet-row .amt{ flex:0 0 auto; white-space:nowrap; }
   .sheet-row .remove{
     color: var(--muted);
     background:none;
@@ -492,6 +549,7 @@
     text-decoration: underline;
     cursor:pointer;
     flex:0 0 auto;
+    white-space:nowrap;
   }
   .sheet-total{
     display:flex;
@@ -531,6 +589,29 @@
     box-shadow: 0 0 0 3px rgba(193,68,46,0.12);
   }
   .field textarea{resize: vertical; min-height: 50px;}
+  .field-error{
+    display:none;
+    color: var(--accent-deep);
+    font-size: 11.5px;
+    font-weight:600;
+    margin-top: 5px;
+  }
+  .field.invalid input, .field.invalid textarea{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(193,68,46,0.14);
+    animation: shakeField 0.35s ease;
+  }
+  .field.invalid .field-error{ display:block; }
+  .field.valid input, .field.valid textarea{
+    border-color: #8FA872;
+  }
+  @keyframes shakeField{
+    0%,100%{ transform: translateX(0); }
+    20%{ transform: translateX(-5px); }
+    40%{ transform: translateX(5px); }
+    60%{ transform: translateX(-4px); }
+    80%{ transform: translateX(4px); }
+  }
   .send-btn{
     width:100%;
     margin-top:20px;
@@ -641,9 +722,17 @@
   <div class="student-pill">🎓 Loved by college hostellers</div>
 
   <div class="badge-wrap">
-    <img class="badge" src="/Moms_kitchen/assets/mom-care-logo.png" alt="Mom Care Home Made Food logo">
+    <img class="badge" src="/assets/mom-care-logo.png" alt="Mom Care Home Made Food logo">
   </div>
  
+  <div class="plate3d-wrap" aria-hidden="true">
+    <div class="plate3d">
+      <div class="ring outer"></div>
+      <div class="ring inner"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
   <div class="brand-name" id="kitchenName">Loading…</div>
   <div class="brand-sub"><span class="heart">♥</span> Home Made Food <span class="heart">♥</span></div>
   <p class="tagline" id="kitchenTagline"></p>
@@ -676,17 +765,20 @@
     <div id="sheetItems"></div>
     <div class="sheet-total"><span>Total</span><span id="sheetTotal">₹0</span></div>
 
-    <div class="field">
+    <div class="field" id="fieldName">
       <label>Your name</label>
       <input type="text" id="custName" placeholder="e.g. Sree varsha">
+      <div class="field-error" id="errName">Please enter your name.</div>
     </div>
-    <div class="field">
+    <div class="field" id="fieldPhone">
       <label>Your phone number</label>
-      <input type="tel" id="custPhone" placeholder="e.g. 98765 43210" inputmode="tel">
+      <input type="tel" id="custPhone" placeholder="e.g. 98765 43210" inputmode="tel" maxlength="10">
+      <div class="field-error" id="errPhone">Enter a valid 10-digit mobile number.</div>
     </div>
-    <div class="field">
+    <div class="field" id="fieldAddress">
       <label>Delivery address</label>
       <textarea id="custAddress" placeholder="Hostel / PG / room no. / landmark"></textarea>
+      <div class="field-error" id="errAddress">Please enter your delivery address.</div>
     </div>
     <div class="field">
       <label>Notes (optional)</label>
@@ -746,6 +838,7 @@ async function loadMenu(){
   renderFooter();
   setupCardTilt();
   setupScrollReveal();
+  setupLiveValidation();
 }
 
 function iconFor(id){ return ICONS[id] || DEFAULT_ICON; }
@@ -910,7 +1003,7 @@ function openSheet(){
   itemsEl.innerHTML = cartArray().map(i => `
     <div class="sheet-row">
       <span class="name">${i.name} × ${i.qty}</span>
-      <span>₹${i.price*i.qty}</span>
+      <span class="amt">₹${i.price*i.qty}</span>
       <button class="remove" onclick="removeItem('${i.key.replace(/'/g,"\\'")}')">Remove</button>
     </div>
   `).join('');
@@ -964,8 +1057,51 @@ function buildOrderMessage(name, phone, address, notes){
   return parts.join('\n');
 }
 
+/* ---------- form validation ---------- */
+const VALIDATORS = {
+  custName: (v) => v.trim().length >= 2,
+  custPhone: (v) => /^[6-9]\d{9}$/.test(v.replace(/\D/g,'')),
+  custAddress: (v) => v.trim().length >= 5
+};
+const FIELD_WRAP = { custName:'fieldName', custPhone:'fieldPhone', custAddress:'fieldAddress' };
+
+function validateField(id){
+  const input = document.getElementById(id);
+  const wrap = document.getElementById(FIELD_WRAP[id]);
+  const valid = VALIDATORS[id](input.value);
+  wrap.classList.toggle('invalid', !valid);
+  wrap.classList.toggle('valid', valid);
+  return valid;
+}
+
+function validateForm(){
+  let ok = true;
+  Object.keys(VALIDATORS).forEach(id => {
+    if(!validateField(id)) ok = false;
+  });
+  return ok;
+}
+
+function setupLiveValidation(){
+  Object.keys(VALIDATORS).forEach(id => {
+    const input = document.getElementById(id);
+    input.addEventListener('input', () => {
+      const wrap = document.getElementById(FIELD_WRAP[id]);
+      if(wrap.classList.contains('invalid')) validateField(id);
+    });
+    input.addEventListener('blur', () => validateField(id));
+  });
+}
+
 function sendOrder(){
   if(cartCount() === 0) return;
+
+  if(!validateForm()){
+    const firstInvalid = document.querySelector('.field.invalid input, .field.invalid textarea');
+    if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
