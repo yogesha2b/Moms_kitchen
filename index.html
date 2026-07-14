@@ -210,27 +210,6 @@
     animation: fadeSlideDown 0.7s ease 0.18s both;
   }
 
-  /* ---------- min order note ---------- */
-  .min-note{
-    max-width: 640px;
-    margin: 14px auto 0;
-    padding: 0 16px;
-    position:relative;
-    z-index:1;
-  }
-  .min-note-inner{
-    background: var(--panel-warm);
-    border: 1px dashed var(--gold);
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    text-align:center;
-    font-weight:600;
-    animation: fadeSlideUp 0.6s ease 0.2s both;
-  }
-  .min-note-inner b{ color: var(--accent-deep); }
-
   /* ---------- tabs ---------- */
   .tabs{
     max-width: 640px;
@@ -738,10 +717,6 @@
   <p class="tagline" id="kitchenTagline"></p>
 </header>
 
-<div class="min-note">
-  <div class="min-note-inner">Please order a <b>minimum of 3</b> per item.</div>
-</div>
-
 <div class="tabs" id="tabs"></div>
 <main id="menuContainer"><p class="load-note">Loading menu…</p></main>
 
@@ -761,7 +736,7 @@
 <div class="overlay" id="overlay" onclick="if(event.target===this) closeSheet()">
   <div class="sheet">
     <div class="sheet-title">Your order</div>
-    <div class="sheet-min-note">Minimum 3 of each item · edit quantities below</div>
+    <div class="sheet-min-note" id="sheetMinNote">Minimum quantity applies per item · edit quantities below</div>
     <div id="sheetItems"></div>
     <div class="sheet-total"><span>Total</span><span id="sheetTotal">₹0</span></div>
 
@@ -799,7 +774,7 @@
    to change for menu updates.
    ========================================================= */
 
-const MIN_QTY = 3;
+let MIN_QTY = 3; // overridden by "minQty" in menu.json, if present
 let CONFIG = null;
 let cart = {}; // key: "categoryId|itemName" -> {name, price, qty}
 
@@ -831,6 +806,7 @@ async function loadMenu(){
     console.error(err);
     return;
   }
+  MIN_QTY = Number.isFinite(CONFIG.minQty) && CONFIG.minQty > 0 ? CONFIG.minQty : MIN_QTY;
   document.getElementById('kitchenName').textContent = CONFIG.kitchenName;
   document.getElementById('kitchenTagline').textContent = CONFIG.tagline;
   renderTabs();
@@ -862,6 +838,7 @@ function renderMenu(){
       ${cat.sub ? `<div class="category-sub">${cat.sub}</div>` : ''}
       ${cat.items.map(item => {
         const key = cat.id + '|' + item.name;
+        const itemMin = itemMinQty(item);
         return `
         <div class="item" id="item-${cssKey(key)}">
           <div class="item-info">
@@ -869,7 +846,7 @@ function renderMenu(){
             ${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}
             <div class="item-price-row">
               <span class="item-price">₹${item.price}</span>
-              <span class="item-min">Min 3</span>
+              <span class="item-min">Min ${itemMin}</span>
             </div>
           </div>
           <div id="ctrl-${cssKey(key)}">${controlHTML(key, item)}</div>
@@ -902,41 +879,47 @@ function renderFooter(){
 
 function cssKey(key){ return key.replace(/[^a-zA-Z0-9]/g,'_'); }
 
+// resolves the effective minimum for an item: item.minQty > global MIN_QTY > 3
+function itemMinQty(item){
+  return (item && Number.isFinite(item.minQty) && item.minQty > 0) ? item.minQty : MIN_QTY;
+}
+
 function controlHTML(key, item){
   const qty = cart[key] ? cart[key].qty : 0;
+  const itemMin = cart[key] ? cart[key].minQty : itemMinQty(item);
   const safeKey = key.replace(/'/g,"\\'");
   const safeName = item.name.replace(/'/g,"\\'");
   if(qty === 0){
-    return `<button class="add-btn" onclick="addItem('${safeKey}', '${safeName}', ${item.price})">Add · min 3</button>`;
+    return `<button class="add-btn" onclick="addItem('${safeKey}', '${safeName}', ${item.price}, ${itemMin})">Add · min ${itemMin}</button>`;
   }
   return `
     <div class="qty-control">
-      <button class="qty-btn" onclick="minusClick('${safeKey}', '${safeName}', ${item.price})" aria-label="${qty===MIN_QTY?'Remove':'Decrease'}">${qty===MIN_QTY ? '✕' : '−'}</button>
+      <button class="qty-btn" onclick="minusClick('${safeKey}', '${safeName}', ${item.price}, ${itemMin})" aria-label="${qty===itemMin?'Remove':'Decrease'}">${qty===itemMin ? '✕' : '−'}</button>
       <span class="qty-num">${qty}</span>
-      <button class="qty-btn" onclick="changeQty('${safeKey}', '${safeName}', ${item.price}, 1)" aria-label="Increase">+</button>
+      <button class="qty-btn" onclick="changeQty('${safeKey}', '${safeName}', ${item.price}, 1, ${itemMin})" aria-label="Increase">+</button>
     </div>`;
 }
 
-function addItem(key, name, price){
-  cart[key] = { name, price, qty: MIN_QTY };
+function addItem(key, name, price, minQty){
+  cart[key] = { name, price, qty: minQty, minQty };
   refreshItem(key);
   refreshTray();
   flashItem(key);
 }
 
-function changeQty(key, name, price, delta){
-  if(!cart[key]) cart[key] = { name, price, qty: MIN_QTY };
+function changeQty(key, name, price, delta, minQty){
+  if(!cart[key]) cart[key] = { name, price, qty: minQty, minQty };
   cart[key].qty += delta;
-  if(cart[key].qty < MIN_QTY) cart[key].qty = MIN_QTY;
+  if(cart[key].qty < cart[key].minQty) cart[key].qty = cart[key].minQty;
   refreshItem(key);
   refreshTray();
 }
 
-function minusClick(key, name, price){
-  if(cart[key] && cart[key].qty <= MIN_QTY){
+function minusClick(key, name, price, minQty){
+  if(cart[key] && cart[key].qty <= cart[key].minQty){
     removeItem(key);
   }else{
-    changeQty(key, name, price, -1);
+    changeQty(key, name, price, -1, minQty);
   }
 }
 
@@ -952,7 +935,8 @@ function refreshItem(key){
   if(!el) return;
   const [, name] = key.split('|');
   const price = cart[key] ? cart[key].price : (findItemPrice(key));
-  el.innerHTML = controlHTML(key, { name, price });
+  const minQty = cart[key] ? cart[key].minQty : findItemMinQty(key);
+  el.innerHTML = controlHTML(key, { name, price, minQty });
 }
 
 function flashItem(key){
@@ -968,6 +952,13 @@ function findItemPrice(key){
   const cat = CONFIG.categories.find(c => c.id === catId);
   const item = cat.items.find(i => i.name === name);
   return item ? item.price : 0;
+}
+
+function findItemMinQty(key){
+  const [catId, name] = key.split('|');
+  const cat = CONFIG.categories.find(c => c.id === catId);
+  const item = cat.items.find(i => i.name === name);
+  return itemMinQty(item);
 }
 
 function cartArray(){ return Object.entries(cart).map(([key, v]) => ({ key, ...v })); }
@@ -1008,6 +999,7 @@ function openSheet(){
     </div>
   `).join('');
   document.getElementById('sheetTotal').textContent = '₹' + cartTotal();
+  document.getElementById('sheetMinNote').textContent = 'Minimum quantity applies per item · edit quantities below';
   document.getElementById('overlay').classList.add('visible');
 }
 
